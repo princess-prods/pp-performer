@@ -2,7 +2,14 @@
   "name": "@pp-performer/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "serve": "nx serve pp-performer",
+    "test": "nx run-many -t test",
+    "lint": "nx run-many -t lint",
+    "build": "nx run-many -t build",
+    "e2e": "nx e2e pp-performer-e2e",
+    "e2e:install": "playwright install"
+  },
   "private": true,
   "dependencies": {
     "@angular/cdk": "22.0.0",
