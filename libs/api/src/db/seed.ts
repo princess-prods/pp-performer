@@ -6,7 +6,11 @@ import { Gender, GenderLabels } from '../schemas/gender.js';
 import { ActFrequency, ActFrequencyLabels, ActFrequencyDescriptions } from '../schemas/act-frequency.js';
 import { ActCategory, ActCategoryLabels } from '../schemas/act-category.js';
 
-const sql = neon(process.env.DATABASE_URL!);
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL environment variable is required');
+}
+
+const sql = neon(process.env.DATABASE_URL);
 const db = drizzle(sql);
 
 async function seed() {
@@ -14,7 +18,7 @@ async function seed() {
 
   // Seed genders
   console.log('Seeding genders...');
-  for (const [key, id] of Object.entries(Gender)) {
+  for (const [, id] of Object.entries(Gender)) {
     await db.insert(genders).values({
       id: id as number,
       name: GenderLabels[id as keyof typeof GenderLabels],
@@ -26,7 +30,7 @@ async function seed() {
 
   // Seed act frequencies
   console.log('Seeding act frequencies...');
-  for (const [key, id] of Object.entries(ActFrequency)) {
+  for (const [, id] of Object.entries(ActFrequency)) {
     await db.insert(actFrequencies).values({
       id: id as number,
       name: ActFrequencyLabels[id as keyof typeof ActFrequencyLabels],
@@ -42,7 +46,7 @@ async function seed() {
 
   // Seed act categories
   console.log('Seeding act categories...');
-  for (const [key, id] of Object.entries(ActCategory)) {
+  for (const [, id] of Object.entries(ActCategory)) {
     await db.insert(actCategories).values({
       id: id as number,
       name: ActCategoryLabels[id as keyof typeof ActCategoryLabels],
