@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <div class="max-w-2xl mx-auto text-center">
       <!-- Hero Section -->
@@ -75,9 +76,9 @@ import { CommonModule } from '@angular/common';
 
       <!-- CTA -->
       <div class="space-y-4 animate-fade-in-up animation-delay-400">
-        <button class="cta-button">
+        <a routerLink="/login" class="cta-button inline-block">
           Get Started
-        </button>
+        </a>
         <p class="text-sm text-muted-foreground">
           No obligation to participate. Ask questions first and decide whether
           the opportunity is right for you.
