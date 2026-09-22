@@ -1,0 +1,9 @@
+{
+  "name": "pp-performer-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/pp-performer-e2e/src",
+  "implicitDependencies": ["pp-performer"],
+  "// targets": "to see all targets run: nx show project pp-performer-e2e --web",
+  "targets": {}
+}
