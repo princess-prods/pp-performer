@@ -29,7 +29,7 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - run: npm ci
+      - run: npm install
 
       - run: npx nx affected -t lint
 
@@ -46,7 +46,7 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - run: npm ci
+      - run: npm install
 
       - run: npx nx affected -t test --coverage --coverageReporters=lcov
 
@@ -71,7 +71,7 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - run: npm ci
+      - run: npm install
 
       - run: npx nx affected -t build
 
@@ -88,7 +88,7 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - run: npm ci
+      - run: npm install
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
