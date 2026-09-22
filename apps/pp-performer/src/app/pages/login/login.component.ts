@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
+  imports: [RouterModule],
   host: { class: 'block min-h-screen bg-background' },
   template: `
     <div class="min-h-screen flex items-center justify-center px-4">
@@ -84,14 +85,14 @@ import { AuthService } from '../../core/auth.service';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   isLoading = false;
   errorMessage = '';
 
   constructor() {
-    // Check for error query params
-    const urlParams = new URLSearchParams(window.location.search);
-    const error = urlParams.get('error');
+    // Check for error query params using ActivatedRoute
+    const error = this.route.snapshot.queryParamMap.get('error');
 
     if (error === 'auth_failed') {
       this.errorMessage = 'Authentication failed. Please try again.';
