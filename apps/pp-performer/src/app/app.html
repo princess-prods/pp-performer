@@ -1,14 +1,16 @@
 <div class="min-h-screen flex flex-col bg-background text-foreground">
   <!-- Header -->
   <header class="border-b bg-card">
-    <div class="container mx-auto px-4 py-4 flex items-center justify-center">
-      <img src="/new_logo_lg.png" alt="Princess Prods" class="h-12 w-auto" />
+    <div class="container mx-auto px-4 py-3 md:py-4 flex items-center justify-center">
+      <img src="/new_logo_lg.png" alt="Princess Prods" class="h-10 md:h-12 w-auto" />
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="flex-1 container mx-auto px-4 py-8">
-    <router-outlet></router-outlet>
+  <main class="flex-1 py-4 md:py-8">
+    <div class="container mx-auto px-4">
+      <router-outlet></router-outlet>
+    </div>
   </main>
 
   <!-- Footer -->
