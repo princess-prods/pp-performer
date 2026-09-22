@@ -3,9 +3,8 @@
 #env
 .env
 
-# Environment files with secrets (keep .test.ts for CI)
-**/environments/environment.ts
-**/environments/environment.prod.ts
+# Local environment overrides with secrets
+**/environments/environment.local.ts
 
 # compiled output
 dist
