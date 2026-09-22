@@ -37,7 +37,10 @@ npx nx run api:db:seed         # Seed lookup tables
 npx nx run-many -t lint        # Lint all projects
 npx nx run-many -t test        # Run unit tests
 npx nx run-many -t build       # Build all projects
-npx nx run-many -t e2e         # Run e2e tests
+
+# E2E tests (requires Playwright browsers)
+npx playwright install         # Install browsers (first time only)
+npx nx e2e pp-performer-e2e    # Run e2e tests
 ```
 
 ## Development Workflow
