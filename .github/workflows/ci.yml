@@ -12,6 +12,8 @@ permissions:
 
 env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+  NX_HEAD: ${{ github.sha }}
 
 jobs:
   lint:
@@ -29,7 +31,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx nx affected -t lint --base=origin/main~1 --head=HEAD
+      - run: npx nx affected -t lint
 
   test:
     name: Unit Tests
@@ -46,7 +48,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx nx affected -t test --base=origin/main~1 --head=HEAD --coverage --coverageReporters=lcov
+      - run: npx nx affected -t test --coverage --coverageReporters=lcov
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -71,7 +73,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npx nx affected -t build --base=origin/main~1 --head=HEAD
+      - run: npx nx affected -t build
 
   e2e:
     name: E2E Tests
@@ -91,7 +93,7 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - run: npx nx affected -t e2e --base=origin/main~1 --head=HEAD
+      - run: npx nx affected -t e2e
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
