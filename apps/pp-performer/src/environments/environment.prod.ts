@@ -1,6 +1,4 @@
-// Production environment
-// These values should be set via CI/CD environment variables or deployment config
-
+// Production environment - values replaced at build time via define configuration
 export const environment = {
   production: true,
   supabase: {

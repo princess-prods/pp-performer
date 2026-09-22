@@ -1,7 +1,4 @@
-// Development environment
-// For local development, update these values with your Supabase credentials
-// DO NOT commit real credentials to the repository
-
+// Development environment - values replaced at build time via define configuration
 export const environment = {
   production: false,
   supabase: {
