@@ -1,23 +1,29 @@
-<div class="min-h-screen flex flex-col bg-background text-foreground">
-  <!-- Header -->
-  <header class="border-b bg-card">
-    <div class="container mx-auto px-4 py-3 md:py-4 flex items-center justify-center">
-      <img src="/new_logo_lg.png" alt="Princess Prods" class="h-10 md:h-12 w-auto" />
-    </div>
-  </header>
+@if (isFullScreen()) {
+  <!-- Full-screen layout for login, dashboard, etc. -->
+  <router-outlet></router-outlet>
+} @else {
+  <!-- Shell layout with header/footer for landing pages -->
+  <div class="min-h-screen flex flex-col bg-background text-foreground">
+    <!-- Header -->
+    <header class="border-b bg-card">
+      <div class="container mx-auto px-4 py-3 md:py-4 flex items-center justify-center">
+        <img src="/new_logo_lg.png" alt="Princess Prods" class="h-10 md:h-12 w-auto" />
+      </div>
+    </header>
 
-  <!-- Main Content -->
-  <main class="flex-1 py-4 md:py-8">
-    <div class="container mx-auto px-4">
-      <router-outlet></router-outlet>
-    </div>
-  </main>
+    <!-- Main Content -->
+    <main class="flex-1 py-4 md:py-8">
+      <div class="container mx-auto px-4">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
 
-  <!-- Footer -->
-  <footer class="border-t bg-muted">
-    <div class="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
-      <p>18+ only. Age and identity verification required.</p>
-      <p class="mt-2">&copy; {{ currentYear }} Princess Prods. All rights reserved.</p>
-    </div>
-  </footer>
-</div>
+    <!-- Footer -->
+    <footer class="border-t bg-muted">
+      <div class="container mx-auto px-4 py-6 text-center text-sm text-muted-foreground">
+        <p>18+ only. Age and identity verification required.</p>
+        <p class="mt-2">&copy; {{ currentYear }} Princess Prods. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+}

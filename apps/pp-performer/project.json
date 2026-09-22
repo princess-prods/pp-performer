@@ -37,7 +37,13 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/pp-performer/src/environments/environment.ts",
+              "with": "apps/pp-performer/src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,

@@ -48,8 +48,17 @@ npx nx e2e pp-performer-e2e    # Run e2e tests
 ### Before Creating PRs
 Run the full CI suite locally to catch failures before pushing:
 ```bash
-npx nx run-many -t lint test build e2e
+# Run lint, test, and build
+npx nx run-many -t lint test build
+
+# Check code coverage meets thresholds
+npx nx run-many -t test --coverage
+
+# Run e2e tests (optional for non-UI changes)
+npx nx e2e pp-performer-e2e
 ```
+
+**Important**: Always check coverage before creating a PR. New code should have tests.
 
 ### Branch Strategy
 - `main` is protected; all changes require PRs
