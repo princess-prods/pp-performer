@@ -6,6 +6,9 @@ This file provides guidance to Claude Code when working with code in this reposi
 
 **pp-performer** is a recruitment stepper application for adult video performers. The app collects interest information from potential performers through a multi-step form flow.
 
+### Mobile-First Design
+This app is primarily accessed via mobile (QR code scans from recruitment cards). All UI work should be developed mobile-first.
+
 ### Tech Stack
 - **Frontend**: Angular 22+ (Nx monorepo)
 - **Backend**: Neon Functions (serverless PostgreSQL)

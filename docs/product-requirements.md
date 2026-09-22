@@ -4,6 +4,16 @@
 
 pp-performer is a recruitment stepper application that collects interest information from adults interested in performing in adult video content. The application emphasizes professionalism, transparency, and informed consent.
 
+## Design Considerations
+
+### Mobile-First
+This application will be viewed most often on mobile devices (users scanning QR codes from recruitment cards). All UI development should:
+- Design for mobile viewport first, then scale up to desktop
+- Use touch-friendly input controls (large tap targets, appropriate spacing)
+- Ensure form inputs are easy to complete on mobile keyboards
+- Test on actual mobile devices, not just browser dev tools
+- Consider thumb-reachable zones for primary actions
+
 ## Stepper Flow
 
 ### Step 0: Age Verification (Gate)
