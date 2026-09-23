@@ -10,6 +10,11 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'verify',
+    loadComponent: () =>
+      import('./pages/verify/verify.component').then((m) => m.VerifyComponent),
+  },
+  {
     path: 'login',
     loadComponent: () =>
       import('./pages/login/login.component').then((m) => m.LoginComponent),

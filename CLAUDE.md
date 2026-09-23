@@ -46,19 +46,15 @@ npx nx e2e pp-performer-e2e    # Run e2e tests
 ## Development Workflow
 
 ### Before Creating PRs
-Run the full CI suite locally to catch failures before pushing:
-```bash
-# Run lint, test, and build
-npx nx run-many -t lint test build
+**Always run `/pre-pr` before creating a pull request.** This command will:
+- Analyze changed files and create/update unit tests
+- Run lint and fix issues
+- Run the build
+- Run tests with coverage and add tests if below thresholds
+- Run E2E tests
+- Report readiness for PR
 
-# Check code coverage meets thresholds
-npx nx run-many -t test --coverage
-
-# Run e2e tests (optional for non-UI changes)
-npx nx e2e pp-performer-e2e
-```
-
-**Important**: Always check coverage before creating a PR. New code should have tests.
+This ensures CI will pass and coverage requirements are met.
 
 ### Branch Strategy
 - `main` is protected; all changes require PRs
@@ -100,11 +96,29 @@ import { Gender, ActCategory, ActFrequency, type AppRouter } from '@pp-performer
 
 ## Third-Party Integrations
 
-### Age Verification (Required)
-The app must use third-party age verification before collecting any personal information. This is a compliance requirement. The verification provider should return only:
-- `age_verified: boolean`
-- `verification_timestamp`
-- `verification_id`
+### Yoti Age Verification (In Progress)
+**Status**: Backend and frontend integration complete. Awaiting Yoti SDK credentials.
+
+**What's implemented:**
+- Backend: `libs/api/src/services/yoti.service.ts` - IDV session management
+- Backend: `libs/api/src/routers/yoti.ts` - tRPC endpoints (createSession, getSession, verifyAge)
+- Frontend: `apps/pp-performer/src/app/core/yoti.service.ts` - Session state management
+- Frontend: `apps/pp-performer/src/app/pages/verify/` - Verification UI with mock mode
+- Route: `/verify` - Age verification page (first step before login)
+
+**To complete when credentials arrive:**
+1. Add `YOTI_CLIENT_SDK_ID` to `.env` file
+2. Place PEM key at `keys/yoti.pem` (directory is gitignored)
+3. Add `YOTI_CLIENT_SDK_ID` and `YOTI_PEM_KEY_BASE64` to GitHub secrets
+4. Add same secrets to Netlify environment variables
+5. Test real Yoti iframe flow
+
+**Environment variables:**
+- `YOTI_CLIENT_SDK_ID` - From Yoti Hub
+- `YOTI_PEM_KEY_PATH` - Local path to PEM file (dev)
+- `YOTI_PEM_KEY_BASE64` - Base64-encoded PEM content (CI/production)
+
+The verification flow requires users to complete age verification BEFORE registration/login.
 
 Do NOT store government IDs, SSNs, or other sensitive identity documents.
 

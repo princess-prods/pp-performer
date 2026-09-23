@@ -3,6 +3,15 @@ module.exports = {
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
   coverageDirectory: '../../coverage/apps/pp-performer',
+  // Coverage thresholds - CI will fail if coverage drops below these
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 60,
+      lines: 70,
+      statements: 70,
+    },
+  },
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/main.ts',
