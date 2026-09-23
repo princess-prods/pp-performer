@@ -1,12 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { YotiService } from './yoti.service';
 
+// Store original fetch
+const originalFetch = global.fetch;
+
 describe('YotiService', () => {
   let service: YotiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(YotiService);
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    service.reset();
   });
 
   it('should be created', () => {
@@ -227,6 +235,238 @@ describe('YotiService', () => {
       await service.mockVerifyFailure();
 
       expect(service.isVerifying()).toBe(false);
+    });
+  });
+
+  describe('createSession (real API)', () => {
+    let mockFetch: jest.Mock;
+
+    beforeEach(() => {
+      mockFetch = jest.fn();
+      global.fetch = mockFetch;
+    });
+
+    it('should create a session successfully', async () => {
+      const mockSession = {
+        sessionId: 'real-session-123',
+        clientSessionToken: 'real-token-456',
+        clientSessionTokenTtl: 600,
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ result: { data: mockSession } }),
+      });
+
+      const session = await service.createSession(
+        'https://example.com/success',
+        'https://example.com/error'
+      );
+
+      expect(session).toEqual(mockSession);
+      expect(service.session()).toEqual(mockSession);
+      expect(service.state()).toBe('verifying');
+      expect(mockFetch).toHaveBeenCalledWith('/api/trpc/yoti.createSession', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          successUrl: 'https://example.com/success',
+          errorUrl: 'https://example.com/error',
+        }),
+      });
+    });
+
+    it('should handle API error response', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      await expect(
+        service.createSession(
+          'https://example.com/success',
+          'https://example.com/error'
+        )
+      ).rejects.toThrow('Failed to create verification session');
+
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('Failed to create verification session');
+    });
+
+    it('should handle network error', async () => {
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(
+        service.createSession(
+          'https://example.com/success',
+          'https://example.com/error'
+        )
+      ).rejects.toThrow('Network error');
+
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('Network error');
+    });
+
+    it('should handle non-Error throw', async () => {
+      mockFetch.mockRejectedValueOnce('string error');
+
+      await expect(
+        service.createSession(
+          'https://example.com/success',
+          'https://example.com/error'
+        )
+      ).rejects.toBe('string error');
+
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('Unknown error');
+    });
+  });
+
+  describe('verifyAge (real API)', () => {
+    let mockFetch: jest.Mock;
+
+    beforeEach(async () => {
+      mockFetch = jest.fn();
+      global.fetch = mockFetch;
+      // Create a mock session first
+      await service.createMockSession();
+    });
+
+    it('should verify age successfully when verified is true', async () => {
+      const mockVerification = {
+        verified: true,
+        dateOfBirth: '1990-05-15',
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ result: { data: mockVerification } }),
+      });
+
+      const result = await service.verifyAge();
+
+      expect(result).toEqual(mockVerification);
+      expect(service.verificationResult()).toEqual(mockVerification);
+      expect(service.state()).toBe('completed');
+    });
+
+    it('should handle verification failure when verified is false', async () => {
+      const mockVerification = {
+        verified: false,
+        reason: 'User is under 18',
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ result: { data: mockVerification } }),
+      });
+
+      const result = await service.verifyAge();
+
+      expect(result).toEqual(mockVerification);
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('User is under 18');
+    });
+
+    it('should handle verification failure with no reason', async () => {
+      const mockVerification = {
+        verified: false,
+      };
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ result: { data: mockVerification } }),
+      });
+
+      const result = await service.verifyAge();
+
+      expect(result).toEqual(mockVerification);
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('Age verification failed');
+    });
+
+    it('should throw error when no session exists', async () => {
+      service.reset();
+
+      await expect(service.verifyAge()).rejects.toThrow('No active session');
+    });
+
+    it('should handle API error response', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+      });
+
+      await expect(service.verifyAge()).rejects.toThrow('Failed to verify age');
+
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('Failed to verify age');
+    });
+
+    it('should handle network error', async () => {
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(service.verifyAge()).rejects.toThrow('Network error');
+
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('Network error');
+    });
+
+    it('should handle non-Error throw', async () => {
+      mockFetch.mockRejectedValueOnce('string error');
+
+      await expect(service.verifyAge()).rejects.toBe('string error');
+
+      expect(service.state()).toBe('failed');
+      expect(service.error()).toBe('Unknown error');
+    });
+  });
+
+  describe('handleIframeMessage additional cases', () => {
+    let mockFetch: jest.Mock;
+
+    beforeEach(async () => {
+      mockFetch = jest.fn();
+      global.fetch = mockFetch;
+      await service.createMockSession();
+    });
+
+    it('should handle success message (no eventCode) and call verifyAge', async () => {
+      const mockVerification = { verified: true, dateOfBirth: '1990-01-01' };
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ result: { data: mockVerification } }),
+      });
+
+      const event = new MessageEvent('message', {
+        origin: 'https://api.yoti.com',
+        data: {},
+      });
+
+      service.handleIframeMessage(event);
+
+      expect(service.state()).toBe('completed');
+
+      // Wait for verifyAge to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    it('should log unknown event codes', () => {
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+      const event = new MessageEvent('message', {
+        origin: 'https://api.yoti.com',
+        data: { eventCode: 'UNKNOWN_EVENT' },
+      });
+
+      service.handleIframeMessage(event);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Yoti iframe event:',
+        'UNKNOWN_EVENT'
+      );
+
+      consoleSpy.mockRestore();
     });
   });
 });

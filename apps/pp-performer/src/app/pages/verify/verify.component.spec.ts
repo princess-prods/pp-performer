@@ -73,6 +73,24 @@ describe('VerifyComponent', () => {
       const compiled = fixture.nativeElement as HTMLElement;
       expect(compiled.textContent).toContain('Mock Verification Mode');
     });
+
+    it('should call createSession when not in mock mode', async () => {
+      jest.spyOn(yotiService, 'isMockMode').mockReturnValue(false);
+      const createSessionSpy = jest
+        .spyOn(yotiService, 'createSession')
+        .mockResolvedValue({
+          sessionId: 'test-session',
+          clientSessionToken: 'test-token',
+          clientSessionTokenTtl: 600,
+        });
+
+      await component.startVerification();
+
+      expect(createSessionSpy).toHaveBeenCalledWith(
+        expect.stringContaining('/verify?status=success'),
+        expect.stringContaining('/verify?status=error')
+      );
+    });
   });
 
   describe('mock verification UI', () => {
@@ -231,6 +249,21 @@ describe('VerifyComponent', () => {
       const removeSpy = jest.spyOn(window, 'removeEventListener');
       component.ngOnDestroy();
       expect(removeSpy).toHaveBeenCalledWith('message', expect.any(Function));
+    });
+  });
+
+  describe('messageHandler', () => {
+    it('should delegate message events to yotiService', () => {
+      const handleMessageSpy = jest.spyOn(yotiService, 'handleIframeMessage');
+      const event = new MessageEvent('message', {
+        origin: 'https://api.yoti.com',
+        data: { eventCode: 'CANCELLED' },
+      });
+
+      // Trigger the private messageHandler by dispatching a message event
+      window.dispatchEvent(event);
+
+      expect(handleMessageSpy).toHaveBeenCalledWith(event);
     });
   });
 });
