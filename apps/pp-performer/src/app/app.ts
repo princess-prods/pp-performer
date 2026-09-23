@@ -15,7 +15,7 @@ export class App {
   protected currentYear = new Date().getFullYear();
 
   // Routes that should use full-screen layout (no shell)
-  private fullScreenRoutes = ['/login', '/auth/callback', '/dashboard'];
+  private fullScreenRoutes = ['/login', '/auth/callback', '/dashboard', '/verify'];
 
   protected isFullScreen = toSignal(
     this.router.events.pipe(
