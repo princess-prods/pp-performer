@@ -8,7 +8,8 @@ module.exports = {
     '!src/main.ts',
     '!src/**/*.spec.ts',
     '!src/test-setup.ts',
-    '!src/environments/environment.test.ts',
+    '!src/env.d.ts',
+    '!src/environments/*.ts', // Environment files use import.meta.env (build-time injection)
   ],
   // Don't treat environment.test.ts as a test file
   testPathIgnorePatterns: ['/node_modules/', 'environment\\.test\\.ts$'],

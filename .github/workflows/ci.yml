@@ -19,6 +19,7 @@ env:
   NG_APP_SUPABASE_ANON_KEY: ${{ secrets.NG_APP_SUPABASE_ANON_KEY }}
 
 jobs:
+  # Step 1: Lint first (fast fail)
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -36,8 +37,29 @@ jobs:
 
       - run: npx nx affected -t lint
 
+  # Step 2: Build after lint passes
+  build:
+    name: Build
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - run: npm install
+
+      - run: npx nx affected -t build
+
+  # Step 3a: Unit tests run after build (in parallel with e2e)
   test:
     name: Unit Tests
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -61,25 +83,10 @@ jobs:
           flags: unittests
           fail_ci_if_error: false
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-
-      - run: npm install
-
-      - run: npx nx affected -t build
-
+  # Step 3b: E2E tests run after build (in parallel with unit tests)
   e2e:
     name: E2E Tests
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
