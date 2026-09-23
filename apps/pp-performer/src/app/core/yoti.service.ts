@@ -227,7 +227,7 @@ export class YotiService {
   /**
    * Simulates failed verification in mock mode
    */
-  async mockVerifyFailure(reason: string = 'User is under 18'): Promise<void> {
+  async mockVerifyFailure(reason = 'User is under 18'): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     this.verificationResultSignal.set({
