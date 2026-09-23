@@ -46,19 +46,15 @@ npx nx e2e pp-performer-e2e    # Run e2e tests
 ## Development Workflow
 
 ### Before Creating PRs
-Run the full CI suite locally to catch failures before pushing:
-```bash
-# Run lint, test, and build
-npx nx run-many -t lint test build
+**Always run `/pre-pr` before creating a pull request.** This command will:
+- Analyze changed files and create/update unit tests
+- Run lint and fix issues
+- Run the build
+- Run tests with coverage and add tests if below thresholds
+- Run E2E tests
+- Report readiness for PR
 
-# Check code coverage meets thresholds
-npx nx run-many -t test --coverage
-
-# Run e2e tests (optional for non-UI changes)
-npx nx e2e pp-performer-e2e
-```
-
-**Important**: Always check coverage before creating a PR. New code should have tests.
+This ensures CI will pass and coverage requirements are met.
 
 ### Branch Strategy
 - `main` is protected; all changes require PRs
